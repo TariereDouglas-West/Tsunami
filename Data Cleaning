@@ -1,0 +1,47 @@
+CREATE DATABASE tsunami;
+USE tsunami;
+
+SELECT *
+	FROM tsunamis;
+    
+ -- Confirming the data types of the variables   
+SHOW COLUMNS FROM tsunamis;
+
+-- Cretaing an event date column that combines Year, Mo, Dy
+
+ALTER TABLE tsunamis
+	ADD event_date date
+    GENERATED ALWAYS AS 
+    (CONCAT(Year, '-', Mo, '-', Dy));
+    
+-- Confirm that the new column was added
+
+SELECT *
+	FROM tsunamis;
+    
+-- Create an event time column that shows if the event occured in the morning, afternoon or night (AM/PM)
+
+ALTER TABLE tsunamis
+	ADD time_of_event VARCHAR(50) AS
+	(CONCAT(
+		SEC_TO_TIME((Hr * 3600) + (Mn * 60)),
+        CASE WHEN Hr < 12 THEN 'AM' ELSE 'PM' END
+			));
+
+-- Confirm that the new column was added
+
+SELECT *
+	FROM tsunamis;
+
+-- Handling the blank cells, deleting unused columns
+
+ALTER TABLE tsunamis
+    DROP COLUMN MoreNanInfo,
+    DROP COLUMN Deposits,
+    DROP COLUMN Missing,
+    DROP COLUMN MissingNanDescription,
+    DROP COLUMN HousesNanDamaged,
+    DROP COLUMN HousesNanDamagedNanDescription,
+    DROP COLUMN TotalNanMissing,
+    DROP COLUMN TotalNanMissingNanDescription,
+    DROP COLUMN TotalNanHousesNanDamaged;
